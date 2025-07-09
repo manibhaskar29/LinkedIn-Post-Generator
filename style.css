@@ -1,0 +1,222 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:wght@700&family=Lato:wght@300;400;700&display=swap');
+
+body {
+    background-color: #f0f2f5;
+    font-family: 'Lato', sans-serif;
+    margin: 0;
+    padding: 20px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+body.dark-mode .container {
+    background: #2c2c2c;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .post-preview {
+    background: #333;
+    border-color: #444;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    background: #444;
+    color: #fff;
+    border-color: #555;
+}
+
+h1, h2{
+    font-family: 'Pacifico', 'Gill Sans', sans-serif;
+    text-align: center;
+}
+
+h3 {
+    font-family: 'Pacifico', 'Gill Sans', sans-serif;
+}
+p, a, li, button {
+    font-family: 'Lato', sans-serif;
+}
+
+.post-preview {
+    border: 1px solid #e1e9ee;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 20px auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.loading {
+    display: none;
+    text-align: center;
+    margin: 20px 0;
+}
+
+#postHistory p {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    margin: 10px 0;
+}
+
+.container {
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 0 auto 20px;
+    background-color: #fff;
+    max-width: 800px;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+#editPost {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    display: none; /* Hidden by default */
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #0077b5;
+    outline: none;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.btn {
+    background-color: #0077b5;
+    color: white;
+}
+
+.btn:hover {
+    background-color: #005582;
+    transform: scale(1.05);
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+ul {
+    padding-left: 20px;
+    margin: 15px 0;
+}
+
+.generate-btn {
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+.template-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.template-btn:hover {
+    background-color: #218838;
+}
+
+.img-generation {
+    margin: 15px 0;
+}
+
+select {
+    width: 32%;
+}
+
+
+/* Quill Editor */
+.ql-container {
+    min-height: 100px;
+    margin: 10px 0;
+}
+
+.ql-toolbar {
+    background: #fff;
+    border-radius: 8px 8px 0 0;
+}
+
+body.dark-mode .ql-toolbar {
+    background: #444;
+}
+
+body.dark-mode .ql-container {
+    background: #333;
+    color: #fff;
+}
+
+/* Animation for loading spinner */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.row span {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between checkbox and label */
+}
+
+input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+}
+
+
+
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+    }
+    .row {
+        flex-direction: column;
+    }
+    .btn, select {
+        width: 100%;
+        margin: 5px 0;
+    }
+    .post-preview {
+        max-width: 100%;
+    }
+    .row span {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
