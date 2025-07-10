@@ -34,9 +34,43 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize APScheduler
+# Initialize database connection based on environment
+is_render = os.getenv("IS_RENDER", "false").lower() == "true"
+if is_render:
+    conn = mysql.connector.connect(
+        host=os.getenv("MYSQL_HOST", ""),
+        user=os.getenv("MYSQL_USER", ""),
+        password=os.getenv("MYSQL_PASSWORD", ""),
+        database=os.getenv("MYSQL_DATABASE", "scheduled_posts")
+    )
+else:
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password=os.getenv("MYSQL_PASSWORD", ""),
+        database="scheduled_posts"
+    )
+
+# Initialize database and table
+cursor = conn.cursor()
+cursor.execute("CREATE DATABASE IF NOT EXISTS scheduled_posts")
+cursor.execute("USE scheduled_posts")
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS posts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        post TEXT,
+        schedule_time VARCHAR(255),
+        job_id VARCHAR(255),
+        status VARCHAR(50)
+    )
+""")
+conn.commit()
+cursor.close()
+
+# Initialize APScheduler with dynamic database URL
+scheduler_db_url = f'mysql+mysqlconnector://{os.getenv("MYSQL_USER", "root")}:{os.getenv("MYSQL_PASSWORD", "")}@{os.getenv("MYSQL_HOST", "localhost")}/{os.getenv("MYSQL_DATABASE", "scheduled_posts")}'
 scheduler = AsyncIOScheduler()
-scheduler.add_jobstore(SQLAlchemyJobStore(url=f'mysql+mysqlconnector://root:{os.getenv("MYSQL_PASSWORD")}@localhost/scheduled_posts'), 'default')
+scheduler.add_jobstore(SQLAlchemyJobStore(url=scheduler_db_url), 'default')
 scheduler.start()
 
 url = "https://api.groq.com/openai/v1/chat/completions"
@@ -74,10 +108,10 @@ async def post_to_linkedin(post: str, job_id: str):
         response.raise_for_status()
         
         conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password=os.getenv("MYSQL_PASSWORD"),
-            database="scheduled_posts"
+            host=os.getenv("MYSQL_HOST", "localhost"),
+            user=os.getenv("MYSQL_USER", "root"),
+            password=os.getenv("MYSQL_PASSWORD", ""),
+            database=os.getenv("MYSQL_DATABASE", "scheduled_posts")
         )
         cursor = conn.cursor()
         cursor.execute(
@@ -91,10 +125,10 @@ async def post_to_linkedin(post: str, job_id: str):
     except Exception as e:
         print(f"Error posting to LinkedIn: {e}")
         conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password=os.getenv("MYSQL_PASSWORD"),
-            database="scheduled_posts"
+            host=os.getenv("MYSQL_HOST", "localhost"),
+            user=os.getenv("MYSQL_USER", "root"),
+            password=os.getenv("MYSQL_PASSWORD", ""),
+            database=os.getenv("MYSQL_DATABASE", "scheduled_posts")
         )
         cursor = conn.cursor()
         cursor.execute(
@@ -123,10 +157,10 @@ async def schedulePost(request: Request):
             raise HTTPException(status_code=400, detail="Post content and valid schedule time are required")
 
         conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password=os.getenv("MYSQL_PASSWORD"),
-            database="scheduled_posts"
+            host=os.getenv("MYSQL_HOST", "localhost"),
+            user=os.getenv("MYSQL_USER", "root"),
+            password=os.getenv("MYSQL_PASSWORD", ""),
+            database=os.getenv("MYSQL_DATABASE", "scheduled_posts")
         )
         cursor = conn.cursor()
         
@@ -172,10 +206,10 @@ async def schedulePost(request: Request):
 async def get_scheduled_posts(status: str = None):
     try:
         conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password=os.getenv("MYSQL_PASSWORD"),
-            database="scheduled_posts"
+            host=os.getenv("MYSQL_HOST", "localhost"),
+            user=os.getenv("MYSQL_USER", "root"),
+            password=os.getenv("MYSQL_PASSWORD", ""),
+            database=os.getenv("MYSQL_DATABASE", "scheduled_posts")
         )
         cursor = conn.cursor(dictionary=True)
         if status:
@@ -332,3 +366,14 @@ async def submitFeedback(request: Request):
     except Exception as e:
         print(f"Error: {e}")
         raise HTTPException(status_code=500, detail="Error submitting feedback")
+
+# Keep the app running
+import asyncio
+loop = asyncio.get_event_loop()
+try:
+    loop.run_forever()
+except KeyboardInterrupt:
+    pass
+finally:
+    scheduler.shutdown()
+    conn.close()
