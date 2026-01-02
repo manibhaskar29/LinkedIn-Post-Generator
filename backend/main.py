@@ -17,6 +17,3 @@ async def test_db():
     }
 
 app.include_router(auth_router)
-
-
-
