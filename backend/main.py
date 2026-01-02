@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from db.mongodb import database
 from auth.routes import router as auth_router
+from ai.routes import router as ai_router
 
 app = FastAPI()
 
@@ -17,3 +18,4 @@ async def test_db():
     }
 
 app.include_router(auth_router)
+app.include_router(ai_router)
