@@ -134,4 +134,3 @@ Then update the frontend API calls in `index.html` to use `http://127.0.0.1:8001
 - CORS is enabled for all origins (configure in `main.py` for production)
 - The application uses APScheduler for post scheduling
 - Sentiment analysis uses VADER sentiment analyzer
-
