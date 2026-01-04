@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from db.mongodb import database
 from auth.routes import router as auth_router
 from ai.routes import router as ai_router
-from scheduler.worker import process_scheduled_posts
+from scheduler.worker import scheduler, process_scheduled_posts
 from analytics.routes import router as analytics_router
 
 app = FastAPI()
