@@ -26,13 +26,13 @@ async def create_post(post: PostCreate, user: str = Depends(get_current_user)):
 
 @router.post("/schedule")
 async def schedule_post(
-    content: str,
+    post: PostCreate,
     schedule_time: datetime,
     email: str = Depends(get_current_user)
 ):
     post = {
         "user_email": email,
-        "content": content,
+        "content": post.content,
         "scheduled_time": schedule_time,
         "status": "scheduled",
         "retry_count": 0,
