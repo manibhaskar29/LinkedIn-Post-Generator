@@ -5,6 +5,9 @@ from auth.routes import router as auth_router
 from ai.routes import router as ai_router
 from scheduler.worker import scheduler, process_scheduled_posts
 from analytics.routes import router as analytics_router
+from posts.routes import router as posts_router
+
+
 
 app = FastAPI()
 
@@ -38,3 +41,4 @@ async def start_scheduler():
 app.include_router(auth_router)
 app.include_router(ai_router)
 app.include_router(analytics_router)
+app.include_router(posts_router)

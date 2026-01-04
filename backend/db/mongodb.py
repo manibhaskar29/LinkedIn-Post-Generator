@@ -6,10 +6,6 @@ load_dotenv()
 
 MONGODB_URI = os.getenv("MONGODB_URI")
 
-client = AsyncIOMotorClient(
-    MONGODB_URI,
-    # tls=True,
-    # tlsAllowInvalidCertificates=True
-)
+client = AsyncIOMotorClient(MONGODB_URI)
 
 database = client.linkedin_post_generator_db

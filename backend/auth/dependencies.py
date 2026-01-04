@@ -15,6 +15,6 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         if payload.get("type") != "access":
             raise HTTPException(status_code=401, detail="Invalid token type")
 
-        return payload["sub"]
+        return payload["email"]
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid or Expired token")
