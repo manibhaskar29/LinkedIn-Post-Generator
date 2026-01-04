@@ -1,11 +1,21 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from db.mongodb import database
 from auth.routes import router as auth_router
 from ai.routes import router as ai_router
 from scheduler.worker import process_scheduled_posts
-
+from analytics.routes import router as analytics_router
 
 app = FastAPI()
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # replace with vercel url later
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
 
 @app.get("/")
 def root():
@@ -27,3 +37,4 @@ async def start_scheduler():
 
 app.include_router(auth_router)
 app.include_router(ai_router)
+app.include_router(analytics_router)
