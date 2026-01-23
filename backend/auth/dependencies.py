@@ -1,7 +1,10 @@
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 

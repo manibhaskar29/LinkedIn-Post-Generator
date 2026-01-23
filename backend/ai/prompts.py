@@ -1,10 +1,10 @@
-def build_prompt(topic: str, tone: str, hoot: str, cta: str):
-    system_promt = "You are a professional Linked Content Writer. Write concise, engaging posts with clear structure."
+def build_prompt(topic: str, tone: str, hook: str, cta: str):
+    system_prompt = "You are a professional Linked Content Writer. Write concise, engaging posts with clear structure."
 
     user_prompt = f"""
     Topic: {topic}
     Tone: {tone}
-    Hoot: {hoot}
+    Hook: {hook}
     CTA: {cta}
 
     Write a LinkedIn post with:
@@ -13,4 +13,4 @@ def build_prompt(topic: str, tone: str, hoot: str, cta: str):
      - Clear CTA at the end
     """
 
-    return system_promt, user_prompt
+    return system_prompt, user_prompt
