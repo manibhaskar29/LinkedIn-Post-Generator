@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiRequest } from "../services/api";
-import { useAuth } from "../context/authContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function Dashboard() {
     const { token, logout } = useAuth();
