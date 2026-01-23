@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/authContext";
 
 export default function Signup() {
+    const { signup } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [message, setMessage] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Signup Email:", email);
-        console.log("Signup Password:", password);
+        try {
+            await signup(email, password);
+            setMessage("Signup successful. Please login.");
+        } catch (err) {
+            setMessage(err.message);
+        }
     };
 
     return (
@@ -48,6 +55,7 @@ export default function Signup() {
                     <button className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
                         Sign Up
                     </button>
+                    {message && <p>{message}</p>}
                 </form>
 
                 <p className="text-sm text-center mt-4">

@@ -56,6 +56,12 @@ IS_RENDER=false
 Since FastAPI serves the frontend automatically, you only need to run the backend:
 
 ```bash
+
+
+cd backend
+python -m venv venv
+.\venv\Scripts\activate
+
 # Using uvicorn (recommended)
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 

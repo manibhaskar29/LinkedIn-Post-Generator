@@ -1,15 +1,22 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/authContext";
 
 export default function Login() {
+    const { login } = useAuth();
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Email: ", email);
-        console.log("Password: ", password);
+        try {
+            await login(email, password);
+            navigate("/dashboard");
+        } catch (err) {
+            setError(err.message);
+        }
     };
 
     return (
@@ -41,9 +48,11 @@ export default function Login() {
                         />
                     </div>
 
-                    <button type="submit" className="w-full bg-blue-600 text-white py=2-2 rounded-md hover:bg-blue-700 transition">
+                    <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">
                         Login
                     </button>
+
+                    {error && <p className="text-red-500">{error}</p>}
 
                     <p className="text-sm text-center mt-4">
                         Don't have an account?{" "}
