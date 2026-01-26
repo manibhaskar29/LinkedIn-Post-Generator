@@ -30,3 +30,15 @@ async def generate_post(
     return {
         'generated_post': f"[MOCK AI OUTPUT]\n{user_prompt}"
     }
+
+@router.get("scheduled")
+async def get_scheduled_posts(user: str = Depends(get_current_user)):
+    posts = await db.scheduled_posts.find(
+        {"user_email": user}
+    ).sort("scheduled_time", 1).to_list(100)
+
+    for p in posts:
+        p["_id"] = str(p["_id"])
+        p["scheduled_time"] = p["scheduled_time"].isoformat()
+
+    return posts
