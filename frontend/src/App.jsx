@@ -15,7 +15,14 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/generate" element={<GeneratePost />} />
+        <Route
+          path="/generate"
+          element={
+            <ProtectedRoute>
+              <GeneratePost />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

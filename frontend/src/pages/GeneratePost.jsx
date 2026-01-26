@@ -13,6 +13,7 @@ export default function GeneratePost() {
     const [result, setResult] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
 
     const handleGenerate = async () => {
         setLoading(true);
@@ -51,9 +52,9 @@ export default function GeneratePost() {
                 },
                 token
             );
-            alert("Post saved successfully");
+            setSuccess("Post saved successfully");
         } catch (err) {
-            alert(err.message);
+            setError(err.message);
         }
     };
 
@@ -88,13 +89,24 @@ export default function GeneratePost() {
 
             <button
                 onClick={handleGenerate}
-                disabled={loading}
-                className="bg-blue-600 text-white px-6 py-2 rounded w-full"
+                disabled={loading || !topic}
+                className={`w-fukk px-6 py-2 rounded text-white 
+                    ${loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"}`}
             >
                 {loading ? "Generating..." : "Generate Post"}
             </button>
 
-            {error && <p className="text-red-600">{error}</p>}
+            {error && (
+                <div className="bg-red-100 text-red-700 p-3 rounded">
+                    {error}
+                </div>
+            )}
+
+            {success && (
+                <div className="bg-green-100 text-green-700 p-3 rounded">
+                    {success}
+                </div>
+            )}
 
             {result && (
                 <div className="bg-gray-100 p-4 rounded space-y-4">
