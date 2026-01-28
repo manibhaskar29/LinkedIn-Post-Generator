@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from auth.dependencies import get_current_user
 from ai.prompts import build_prompt
 from ai.rate_limit import check_rate_limit
+from db.mongodb import db
 
 router = APIRouter(prefix = "/ai", tags = ["AI"])
 
@@ -31,7 +32,7 @@ async def generate_post(
         'generated_post': f"[MOCK AI OUTPUT]\n{user_prompt}"
     }
 
-@router.get("scheduled")
+@router.get("/scheduled")
 async def get_scheduled_posts(user: str = Depends(get_current_user)):
     posts = await db.scheduled_posts.find(
         {"user_email": user}

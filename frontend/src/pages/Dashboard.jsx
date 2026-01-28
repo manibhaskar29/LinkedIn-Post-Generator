@@ -27,7 +27,7 @@ export default function Dashboard() {
         }
 
         fetchAnalytics();
-    }, [token]);
+    }, [token]); // [token] means if user logs out and logs in again, then dashboard will be reloaded
 
     if (loading) {
         return <p className="text-center mt-10">Loading dashboard...</p>;

@@ -24,6 +24,18 @@ async def create_post(post: PostCreate, user: str = Depends(get_current_user)):
     post_data["created_at"] = post_data["created_at"].isoformat()
     return {"message": "Post created successfully", "post": post_data}
 
+@router.get("/all")
+async def get_all_posts(user: str = Depends(get_current_user)):
+    posts = await database.posts.find(
+        {"user_email": user}
+    ).sort("created_at", -1).to_list(100)
+    
+    for post in posts:
+        post["_id"] = str(post["_id"])
+        post["created_at"] = post["created_at"].isoformat()
+    
+    return posts
+
 @router.post("/schedule")
 async def schedule_post(
     post: PostCreate,

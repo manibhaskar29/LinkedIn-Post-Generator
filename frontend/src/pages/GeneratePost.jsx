@@ -90,7 +90,7 @@ export default function GeneratePost() {
             <button
                 onClick={handleGenerate}
                 disabled={loading || !topic}
-                className={`w-fukk px-6 py-2 rounded text-white 
+                className={`w-full px-6 py-2 rounded text-white 
                     ${loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"}`}
             >
                 {loading ? "Generating..." : "Generate Post"}

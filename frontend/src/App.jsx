@@ -6,6 +6,9 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import GeneratePost from './pages/GeneratePost';
+import ScheduledPosts from './pages/ScheduledPosts';
+import Posts from './pages/Posts';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -14,12 +17,35 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/generate"
           element={
             <ProtectedRoute>
               <GeneratePost />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/posts"
+          element={
+            <ProtectedRoute>
+              <Posts />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/scheduled"
+          element={
+            <ProtectedRoute>
+              <ScheduledPosts />
             </ProtectedRoute>
           }
         />
