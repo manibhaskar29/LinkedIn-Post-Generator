@@ -1,19 +1,29 @@
-# Ignore environment file
-.env
+# Root .gitignore for LinkedIn Post Generator
 
-# Ignore Python virtual environment
-venv/
-__pycache__/
-*.pyc
+# Backend
+backend/__pycache__/
+backend/*.pyc
+backend/venv/
+backend/.env
 
-# Ignore node_modules (if applicable)
-node_modules/
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.production
 
-# Ignore log files
-*.log
+# IDE
+.vscode/
+.idea/
+*.swp
 
-# Ignore OS generated files
+# OS
 .DS_Store
 Thumbs.db
 
-learnings.md
+# Logs
+*.log
+
+# Brain/Artifacts (development only)
+.gemini/
