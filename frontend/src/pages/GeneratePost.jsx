@@ -99,7 +99,7 @@ export default function GeneratePost() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 overflow-x-hidden">
             <Navbar />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -218,8 +218,8 @@ export default function GeneratePost() {
                                 onClick={handleGenerate}
                                 disabled={loading || !topic.trim()}
                                 className={`w-full py-4 rounded-lg font-semibold text-white transition-all flex items-center justify-center gap-2 ${loading || !topic.trim()
-                                        ? "bg-gray-400 cursor-not-allowed"
-                                        : "bg-gradient-primary hover:shadow-lg"
+                                    ? "bg-gray-400 cursor-not-allowed"
+                                    : "bg-gradient-primary hover:shadow-lg"
                                     }`}
                             >
                                 {loading ? (
@@ -281,8 +281,8 @@ export default function GeneratePost() {
                                             whileTap={{ scale: 0.9 }}
                                             onClick={handleSave}
                                             className={`p-2 rounded-lg transition-colors ${saved
-                                                    ? "bg-green-100 dark:bg-green-900/30"
-                                                    : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
+                                                ? "bg-green-100 dark:bg-green-900/30"
+                                                : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
                                                 }`}
                                             title="Save post"
                                         >
@@ -346,10 +346,10 @@ export default function GeneratePost() {
                                                     <Check className="w-4 h-4 text-green-600" />
                                                 )}
                                                 <span className={`text-sm font-medium ${isOverLimit
-                                                        ? "text-red-600"
-                                                        : isNearLimit
-                                                            ? "text-yellow-600"
-                                                            : "text-green-600"
+                                                    ? "text-red-600"
+                                                    : isNearLimit
+                                                        ? "text-yellow-600"
+                                                        : "text-green-600"
                                                     }`}>
                                                     {charCount} / {MAX_CHARS} characters
                                                 </span>

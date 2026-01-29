@@ -6,6 +6,8 @@ from ai.routes import router as ai_router
 from scheduler.worker import scheduler, process_scheduled_posts
 from analytics.routes import router as analytics_router
 from posts.routes import router as posts_router
+from templates.routes import router as templates_router
+from user_profile.routes import router as profile_router
 
 
 
@@ -43,3 +45,5 @@ app.include_router(auth_router)
 app.include_router(ai_router)
 app.include_router(analytics_router)
 app.include_router(posts_router)
+app.include_router(templates_router)
+app.include_router(profile_router)
