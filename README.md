@@ -1,34 +1,5 @@
 # 🚀 LinkedIn Post Generator
 
-> An AI-powered full-stack web application that helps users create engaging LinkedIn posts using advanced AI technology, manage content, track analytics, and schedule posts for optimal engagement.
-
-[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![Groq AI](https://img.shields.io/badge/Groq-FF6F00?style=for-the-badge&logo=ai&logoColor=white)](https://groq.com/)
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-
----
-
-## 📸 Application Screenshots
-
-````carousel
-![Login Page - Secure authentication with email and password](file:///C:/Users/Kenguva%20Manibhaskar/.gemini/antigravity/brain/1fbbd8a1-69e2-4f32-a2f3-547cdf226175/login_page_1769745790605.png)
-<!-- slide -->
-![AI Post Generator - Create engaging LinkedIn posts with AI assistance](file:///C:/Users/Kenguva%20Manibhaskar/.gemini/antigravity/brain/1fbbd8a1-69e2-4f32-a2f3-547cdf226175/generate_page_1769746662292.png)
-<!-- slide -->
-![Posts Library - Manage and organize all your generated content](file:///C:/Users/Kenguva%20Manibhaskar/.gemini/antigravity/brain/1fbbd8a1-69e2-4f32-a2f3-547cdf226175/posts_page_1769746712994.png)
-<!-- slide -->
-![Dashboard - Overview of your content performance and quick access to features](file:///C:/Users/Kenguva%20Manibhaskar/.gemini/antigravity/brain/1fbbd8a1-69e2-4f32-a2f3-547cdf226175/dashboard_page_1769746614910.png)
-````
-
-**🎥 Video Demo:**
-
-![Application Demo](file:///C:/Users/Kenguva%20Manibhaskar/.gemini/antigravity/brain/1fbbd8a1-69e2-4f32-a2f3-547cdf226175/app_demo_screenshots_1769745609631.webp)
-
----
-
 ## 🎯 Project Overview
 
 The **LinkedIn Post Generator** is a modern, full-stack SaaS application designed to streamline content creation for LinkedIn professionals. Built with cutting-edge technologies and powered by Groq's Llama 3.3 AI model, this application offers intelligent post generation, comprehensive content management, performance analytics, and scheduling capabilities.
