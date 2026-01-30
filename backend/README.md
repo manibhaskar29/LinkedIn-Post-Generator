@@ -195,7 +195,7 @@ Create a `.env` file in the `backend/` directory:
 
 ```env
 # MongoDB Configuration
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/linkedin_post_generator_db?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database_name>?retryWrites=true&w=majority
 
 # JWT Authentication
 JWT_SECRET=your-super-secret-jwt-key-minimum-32-characters

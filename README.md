@@ -272,7 +272,7 @@ The application will be available at:
 
 ```env
 # MongoDB Configuration
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/linkedin_post_generator_db
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database_name>
 
 # JWT Authentication
 JWT_SECRET=your-super-secret-jwt-key-here
