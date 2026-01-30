@@ -2,13 +2,16 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
+from dotenv import load_dotenv
 
-# Gmail SMTP Configuration
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
-SMTP_USERNAME = "kenguva.manibhaskar@gmail.com"
-SMTP_PASSWORD = "mdfu jqmf nvuk sodb"  # App password
-FROM_EMAIL = "kenguva.manibhaskar@gmail.com"
+load_dotenv()
+
+# Gmail SMTP Configuration from environment variables
+SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+SMTP_USERNAME = os.getenv("SMTP_USERNAME")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+FROM_EMAIL = os.getenv("FROM_EMAIL")
 
 
 def send_otp_email(to_email: str, otp: str) -> bool:
@@ -59,9 +62,9 @@ def send_otp_email(to_email: str, otp: str) -> bool:
             server.login(SMTP_USERNAME, SMTP_PASSWORD)
             server.sendmail(FROM_EMAIL, to_email, message.as_string())
 
-        print(f"✅ OTP email sent successfully to {to_email}")
+        print(f"✅ OTP sent successfully to {to_email}")
         return True
 
     except Exception as e:
-        print(f"❌ Failed to send email: {str(e)}")
+        print(f"❌ Failed to send otp: {str(e)}")
         return False

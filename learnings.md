@@ -699,3 +699,121 @@ Verify database integrity
 Check responsive design on mobile
 Test dark mode compatibility
 Verify all toast notifications work
+
+
+OTP Registration Feature - Implementation Plan
+Overview
+Add email OTP (One-Time Password) verification to the registration process to ensure valid email addresses.
+
+User Flow
+Current Flow:
+User enters email + password
+Account created immediately
+New Flow:
+User enters email + password
+OTP sent to email
+User enters 6-digit OTP
+OTP verified → Account created
+Implementation Details
+Backend Changes
+1. OTP Storage (In-Memory for Simplicity)
+Store OTPs in memory dictionary: {email: {code: "123456", expires: datetime}}
+Alternative: Store in MongoDB with TTL index
+2. Email Service Setup
+IMPORTANT
+
+Email Service Required: Need SMTP credentials to send emails.
+
+Options:
+
+Gmail SMTP (Free, requires App Password)
+SendGrid (Free tier: 100 emails/day)
+Mailtrap (Dev/testing only)
+Skip email, show OTP in console (Development mode)
+3. New Endpoints
+POST /auth/register/send-otp
+Input: {email, password}
+Action: Generate 6-digit OTP, send email, store OTP
+Response: {message: "OTP sent to email"}
+POST /auth/register/verify-otp
+Input: {email, otp, password}
+Action: Verify OTP, create user account
+Response: {access_token, user}
+4. Files to Create/Modify
+[NEW] backend/utils/email_service.py
+
+- send_otp_email(email, otp)
+- SMTP configuration
+[NEW] backend/auth/otp_store.py
+
+- generate_otp()
+- store_otp(email, otp)
+- verify_otp(email, otp)
+- cleanup_expired()
+[MODIFY] 
+backend/auth/routes.py
+
+Add /register/send-otp endpoint
+Add /register/verify-otp endpoint
+Keep original /register as fallback
+Frontend Changes
+1. Multi-Step Registration Component
+[MODIFY] 
+frontend/src/pages/Register.jsx
+
+Steps:
+
+Step 1: Email + Password input
+Step 2: OTP verification (6-digit input)
+Step 3: Success message
+2. OTP Input Component
+Features:
+
+6 separate input boxes (one per digit)
+Auto-focus next box on digit entry
+Auto-submit when 6 digits entered
+Resend OTP button (with countdown)
+Error handling
+Configuration Options
+Option 1: Gmail SMTP (Recommended for Dev)
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+SMTP_USERNAME = "your-email@gmail.com"
+SMTP_PASSWORD = "your-app-password"  # Not regular password!
+Option 2: Development Mode (No Email)
+DEV_MODE = True  # Print OTP to console instead of sending
+Security Considerations
+✅ OTP expires after 5 minutes ✅ Rate limiting: Max 3 OTP requests per email per hour ✅ OTP is 6 digits (100,000 - 999,999) ✅ One-time use: OTP deleted after successful verification ✅ HTTPS required in production
+
+Questions for You
+Before implementing, please clarify:
+
+Email Service: Do you want to:
+
+Use Gmail SMTP (I'll guide you to set up App Password)
+Skip emails and show OTP in console (dev mode)
+Use a different email service?
+OTP Expiration: How long should OTP be valid?
+
+5 minutes (recommended)
+10 minutes
+Other?
+Resend Limit: How many resend OTP requests allowed?
+
+3 attempts per hour (recommended)
+Unlimited
+Other?
+Implementation Steps
+Backend:
+
+Create OTP storage system
+Add OTP generation logic
+Setup email service (or dev mode)
+Create new registration endpoints
+Add rate limiting
+Frontend:
+
+Convert Register to multi-step form
+Create OTP input component
+Add resend OTP functionality
+Update UI/UX for better flow
