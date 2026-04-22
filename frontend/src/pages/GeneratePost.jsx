@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Sparkles, Copy, Save, RefreshCw, Loader2,
-    Check, AlertCircle, ChevronDown
+    Check, AlertCircle, ChevronDown, Calendar, X
 } from "lucide-react";
 import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
@@ -30,6 +30,12 @@ export default function GeneratePost() {
     const [loading, setLoading] = useState(false);
     const [copied, setCopied] = useState(false);
     const [saved, setSaved] = useState(false);
+
+    // Scheduling state
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
+    const [scheduleDate, setScheduleDate] = useState("");
+    const [scheduleTime, setScheduleTime] = useState("");
+    const [scheduling, setScheduling] = useState(false);
 
     const charCount = result.length;
     const isNearLimit = charCount > MAX_CHARS * 0.9;
@@ -90,6 +96,50 @@ export default function GeneratePost() {
             toast.success("Post saved successfully!");
         } catch (err) {
             toast.error(err.message || "Failed to save post");
+        }
+    };
+
+    const handleSchedule = async () => {
+        if (!result) {
+            toast.error("No post to schedule");
+            return;
+        }
+
+        if (!scheduleDate || !scheduleTime) {
+            toast.error("Please select date and time");
+            return;
+        }
+
+        setScheduling(true);
+        try {
+            const scheduledDateTime = new Date(`${scheduleDate}T${scheduleTime}`);
+
+            // Check if scheduled time is in the future
+            if (scheduledDateTime <= new Date()) {
+                toast.error("Scheduled time must be in the future");
+                setScheduling(false);
+                return;
+            }
+
+            await apiRequest(
+                "/posts/schedule",
+                "POST",
+                {
+                    content: result,
+                    tone,
+                    schedule_time: scheduledDateTime.toISOString()
+                },
+                token
+            );
+
+            toast.success("Post scheduled successfully!");
+            setShowScheduleModal(false);
+            setScheduleDate("");
+            setScheduleTime("");
+        } catch (err) {
+            toast.error(err.message || "Failed to schedule post");
+        } finally {
+            setScheduling(false);
         }
     };
 
@@ -288,6 +338,16 @@ export default function GeneratePost() {
                                         >
                                             <Save className={`w-5 h-5 ${saved ? 'text-green-600' : 'text-gray-600 dark:text-gray-300'}`} />
                                         </motion.button>
+
+                                        <motion.button
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.9 }}
+                                            onClick={() => setShowScheduleModal(true)}
+                                            className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+                                            title="Schedule post"
+                                        >
+                                            <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                        </motion.button>
                                     </div>
                                 )}
                             </div>
@@ -380,6 +440,106 @@ export default function GeneratePost() {
                     </motion.div>
                 </div>
             </div>
+
+            {/* Schedule Modal */}
+            <AnimatePresence>
+                {showScheduleModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
+                        onClick={() => setShowScheduleModal(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 max-w-md w-full"
+                        >
+                            <div className="flex items-center justify-between mb-6">
+                                <div className="flex items-center gap-3">
+                                    <Calendar className="w-6 h-6 text-blue-600" />
+                                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                        Schedule Post
+                                    </h3>
+                                </div>
+                                <button
+                                    onClick={() => setShowScheduleModal(false)}
+                                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                                >
+                                    <X className="w-5 h-5 text-gray-500" />
+                                </button>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        📅 Date
+                                    </label>
+                                    <input
+                                        type="date"
+                                        value={scheduleDate}
+                                        onChange={(e) => setScheduleDate(e.target.value)}
+                                        min={new Date().toISOString().split('T')[0]}
+                                        className="input w-full"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        🕐 Time
+                                    </label>
+                                    <input
+                                        type="time"
+                                        value={scheduleTime}
+                                        onChange={(e) => setScheduleTime(e.target.value)}
+                                        className="input w-full"
+                                    />
+                                </div>
+
+                                {scheduleDate && scheduleTime && (
+                                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                                        <p className="text-sm text-blue-800 dark:text-blue-300">
+                                            📍 Scheduled for: {new Date(`${scheduleDate}T${scheduleTime}`).toLocaleString()}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex gap-3 mt-6">
+                                <button
+                                    onClick={() => setShowScheduleModal(false)}
+                                    className="flex-1 py-3 px-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSchedule}
+                                    disabled={scheduling || !scheduleDate || !scheduleTime}
+                                    className={`flex-1 py-3 px-4 rounded-lg font-semibold text-white transition-all flex items-center justify-center gap-2 ${scheduling || !scheduleDate || !scheduleTime
+                                            ? 'bg-gray-400 cursor-not-allowed'
+                                            : 'bg-blue-600 hover:bg-blue-700'
+                                        }`}
+                                >
+                                    {scheduling ? (
+                                        <>
+                                            <Loader2 className="w-5 h-5 animate-spin" />
+                                            Scheduling...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Calendar className="w-5 h-5" />
+                                            Schedule
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

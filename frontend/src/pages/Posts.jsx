@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import Loader from "../components/Loader";
 import { motion, AnimatePresence } from "framer-motion";
-import { Edit, Trash2, Copy, X, Star, Search, Filter, Download } from "lucide-react";
+import { Edit, Trash2, Copy, X, Star, Search, Filter, Download, Calendar, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { exportToCSV, exportToPDF } from "../utils/exportUtils";
 
@@ -20,6 +20,12 @@ export default function Posts() {
     const [filterFavorite, setFilterFavorite] = useState(false);
     const [sortBy, setSortBy] = useState("created_at");
     const [sortOrder, setSortOrder] = useState("desc");
+
+    // Scheduling state
+    const [schedulingPost, setSchedulingPost] = useState(null);
+    const [scheduleDate, setScheduleDate] = useState("");
+    const [scheduleTime, setScheduleTime] = useState("");
+    const [scheduling, setScheduling] = useState(false);
 
     const trackedViews = useRef(new Set()); // Track which posts have been viewed
 
@@ -156,6 +162,46 @@ export default function Posts() {
             toast.success(response.message);
         } catch (err) {
             toast.error(err.message || "Failed to toggle favorite");
+        }
+    };
+
+    const handleSchedulePost = async () => {
+        if (!schedulingPost) return;
+
+        if (!scheduleDate || !scheduleTime) {
+            toast.error("Please select date and time");
+            return;
+        }
+
+        setScheduling(true);
+        try {
+            const scheduledDateTime = new Date(`${scheduleDate}T${scheduleTime}`);
+
+            if (scheduledDateTime <= new Date()) {
+                toast.error("Scheduled time must be in the future");
+                setScheduling(false);
+                return;
+            }
+
+            await apiRequest(
+                "/posts/schedule",
+                "POST",
+                {
+                    content: schedulingPost.content,
+                    tone: schedulingPost.tone,
+                    schedule_time: scheduledDateTime.toISOString()
+                },
+                token
+            );
+
+            toast.success("Post scheduled successfully!");
+            setSchedulingPost(null);
+            setScheduleDate("");
+            setScheduleTime("");
+        } catch (err) {
+            toast.error(err.message || "Failed to schedule post");
+        } finally {
+            setScheduling(false);
         }
     };
 
@@ -367,6 +413,15 @@ export default function Posts() {
                                     <Copy className="w-4 h-4" />
                                     Copy
                                 </motion.button>
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => setSchedulingPost(post)}
+                                    className="flex items-center gap-1 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 font-medium"
+                                >
+                                    <Calendar className="w-4 h-4" />
+                                    Schedule
+                                </motion.button>
                             </div>
                         </motion.div>
                     ))}
@@ -391,6 +446,106 @@ export default function Posts() {
                         onConfirm={() => handleDelete(deleteConfirm)}
                         onCancel={() => setDeleteConfirm(null)}
                     />
+                )}
+            </AnimatePresence>
+
+            {/* Schedule Post Modal */}
+            <AnimatePresence>
+                {schedulingPost && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4"
+                        onClick={() => setSchedulingPost(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 max-w-md w-full"
+                        >
+                            <div className="flex items-center justify-between mb-6">
+                                <div className="flex items-center gap-3">
+                                    <Calendar className="w-6 h-6 text-purple-600" />
+                                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                        Schedule Post
+                                    </h3>
+                                </div>
+                                <button
+                                    onClick={() => setSchedulingPost(null)}
+                                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                                >
+                                    <X className="w-5 h-5 text-gray-500" />
+                                </button>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        📅 Date
+                                    </label>
+                                    <input
+                                        type="date"
+                                        value={scheduleDate}
+                                        onChange={(e) => setScheduleDate(e.target.value)}
+                                        min={new Date().toISOString().split('T')[0]}
+                                        className="input w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-gray-100"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        🕐 Time
+                                    </label>
+                                    <input
+                                        type="time"
+                                        value={scheduleTime}
+                                        onChange={(e) => setScheduleTime(e.target.value)}
+                                        className="input w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-gray-100"
+                                    />
+                                </div>
+
+                                {scheduleDate && scheduleTime && (
+                                    <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-3">
+                                        <p className="text-sm text-purple-800 dark:text-purple-300">
+                                            📍 Scheduled for: {new Date(`${scheduleDate}T${scheduleTime}`).toLocaleString()}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex gap-3 mt-6">
+                                <button
+                                    onClick={() => setSchedulingPost(null)}
+                                    className="flex-1 py-3 px-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSchedulePost}
+                                    disabled={scheduling || !scheduleDate || !scheduleTime}
+                                    className={`flex-1 py-3 px-4 rounded-lg font-semibold text-white transition-all flex items-center justify-center gap-2 ${scheduling || !scheduleDate || !scheduleTime
+                                            ? 'bg-gray-400 cursor-not-allowed'
+                                            : 'bg-purple-600 hover:bg-purple-700'
+                                        }`}
+                                >
+                                    {scheduling ? (
+                                        <>
+                                            <Loader2 className="w-5 h-5 animate-spin" />
+                                            Scheduling...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Calendar className="w-5 h-5" />
+                                            Schedule
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
                 )}
             </AnimatePresence>
         </div>

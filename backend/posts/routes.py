@@ -220,3 +220,85 @@ async def toggle_favorite(post_id: str, user: str = Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error toggling favorite: {str(e)}")
 
+# Scheduled Posts Management Endpoints
+
+@router.get("/scheduled/all")
+async def get_all_scheduled_posts(
+    user: str = Depends(get_current_user),
+    status: Optional[str] = None,
+    sort_order: Optional[str] = "desc"
+):
+    """Get all scheduled posts with optional filtering"""
+    query = {"user_email": user}
+    
+    # Add status filter
+    if status:
+        query["status"] = status
+    
+    # Determine sort direction
+    sort_direction = -1 if sort_order == "desc" else 1
+    
+    # Get scheduled posts with filters and sorting
+    posts = await database.scheduled_posts.find(query).sort("scheduled_time", sort_direction).to_list(100)
+    
+    for post in posts:
+        post["_id"] = str(post["_id"])
+        post["scheduled_time"] = post["scheduled_time"].isoformat()
+        post["created_at"] = post["created_at"].isoformat()
+    
+    return posts
+
+@router.delete("/scheduled/{scheduled_post_id}")
+async def delete_scheduled_post(scheduled_post_id: str, user: str = Depends(get_current_user)):
+    """Delete a scheduled post by ID"""
+    try:
+        # Check if scheduled post exists and belongs to user
+        existing_post = await database.scheduled_posts.find_one({
+            "_id": ObjectId(scheduled_post_id),
+            "user_email": user
+        })
+        
+        if not existing_post:
+            raise HTTPException(status_code=404, detail="Scheduled post not found")
+        
+        # Delete the scheduled post
+        await database.scheduled_posts.delete_one({"_id": ObjectId(scheduled_post_id)})
+        
+        return {"message": "Scheduled post deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error deleting scheduled post: {str(e)}")
+
+@router.put("/scheduled/{scheduled_post_id}")
+async def update_scheduled_post(
+    scheduled_post_id: str,
+    schedule_time: datetime,
+    user: str = Depends(get_current_user)
+):
+    """Update the scheduled time for a scheduled post"""
+    try:
+        # Check if scheduled post exists and belongs to user
+        existing_post = await database.scheduled_posts.find_one({
+            "_id": ObjectId(scheduled_post_id),
+            "user_email": user
+        })
+        
+        if not existing_post:
+            raise HTTPException(status_code=404, detail="Scheduled post not found")
+        
+        # Only allow updating if status is still "scheduled"
+        if existing_post.get("status") != "scheduled":
+            raise HTTPException(status_code= 400, detail="Cannot update a post that has already been published or failed")
+        
+        # Update the scheduled time
+        await database.scheduled_posts.update_one(
+            {"_id": ObjectId(scheduled_post_id)},
+            {"$set": {"scheduled_time": schedule_time}}
+        )
+        
+        return {"message": "Scheduled time updated successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error updating scheduled post: {str(e)}")
